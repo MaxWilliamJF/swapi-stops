@@ -1,3 +1,10 @@
+const API = {
+    baseURL: 'https://swapi.dev/api/'
+}
+
+let starships = [];
+
+const setStarships = (starships) => starships;
 
 const validateDistance = (distance) => {
     return distance;
@@ -12,7 +19,18 @@ const calculateStops = () => {
 }
 
 const findStarhips = () => {
-    // fetch();
+    if (!starships.length) {
+        // Get first ten starships
+        fetch(API.baseURL + 'starships')
+            .then(response => response.json())
+            .then(data => {
+                if (data.results) {
+                    starships = data.results;
+                }
+            });
+    }
+
+    return starships;
 }
 
 const btnCalculate = document.getElementById('calculate');
