@@ -4,10 +4,6 @@ const API = {
 
 let starships = [];
 
-const validateDistance = (distance) => {
-    return distance;
-}
-
 const start = async () => {
     const distance = validateDistance(document.getElementById('distance').value);
     console.log('Future validated distance', distance);
@@ -24,13 +20,13 @@ const calculateStops = (starships, distance) => {
     for (let i = 0; i < qtdStarships; i++) {
         const starship = starships[i];
         const stops = Math.ceil(distance / Number(starship.MGLT));
-        console.log(starship.MGLT + ' - ' + starship.name, '\n' + stops + '\n');
+
+        addStopsToList(stops, starship.name);
     }
 }
 
 const findStarhips = async () => {
     if (!starships.length) {
-
         // Get first ten starships
         await fetch(API.baseURL + 'starships')
             .then(response => response.json())
@@ -41,6 +37,14 @@ const findStarhips = async () => {
                 }
             });
     }
+}
+
+const addStopsToList = (stopsNumber, spaceship) => {
+    const list = document.getElementById('timeList');
+    const listItem = document.createElement('li');
+    listItem.innerText = spaceship + ' - ' + stopsNumber;
+
+    list.appendChild(listItem);
 }
 
 const btnCalculate = document.getElementById('calculate');
