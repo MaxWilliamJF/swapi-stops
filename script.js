@@ -3,14 +3,16 @@ const API = {
 }
 
 let starships = [];
+let currentDistance = null;
 
 const start = async () => {
     const distance = validateDistance(document.getElementById('distance').value);
     console.log('Future validated distance', distance);
 
-    if (distance) {
+    if (distance != currentDistance) {
+        currentDistance = distance;
         await findStarhips();
-        calculateStops(starships, distance);
+        calculateStops(starships, currentDistance);
     }
 }
 
@@ -21,23 +23,28 @@ const calculateStops = (starships, distance) => {
     for (let i = 0; i < qtdStarships; i++) {
         const starship = starships[i];
         const timeSuply = timeSuplyInHours(starship['consumables']);
-        const stops = Math.trunc(distance / parseInt(starship.MGLT) / timeSuply);
+        const stops = (timeSuply && parseInt(starship.MGLT)) ? Math.trunc(distance / parseInt(starship.MGLT) / timeSuply) : 'Sem informações suficientes :(';
 
         addStopsToList(stops, starship.name);
     }
 }
 
-const findStarhips = async () => {
-    if (!starships.length) {
-        // Get first ten starships
-        await fetch(API.baseURL + 'starships')
+const getStarshipsOnAPI = async(url) => {
+    if (url) {
+        await fetch(url)
             .then(response => response.json())
-            .then(data => {
-                if (data.results) {
-                    // Create setter?
-                    starships = data.results;
+            .then(async data => {
+                if (data.results && data.next) {
+                    starships = starships.concat(data.results);
+                    await getStarshipsOnAPI(data.next);
                 }
             });
+    }
+}
+
+const findStarhips = async () => {
+    if (!starships.length) {
+        await getStarshipsOnAPI(API.baseURL + 'starships');
     }
 }
 
@@ -49,20 +56,25 @@ const timeSuplyInHours = (consumables) => {
         week: 168,
         day: 24
     }
-    
+
     const splited = consumables.split(' ');
-    const amount = splited[0];
-    const timeString = splited[1];
 
-    Object.keys(timeInHoursTable).forEach(elm => {
-        if (timeString.includes(elm)) {
-            console.log('ELM', amount, elm, timeString, timeInHoursTable[elm]);
-            timeInHours = timeInHoursTable[elm];
-            return;
-        }
-    });
+    if (splited.length === 2) {
+        const amount = splited[0];
+        const timeString = splited[1];
 
-    return timeInHours * amount;
+        Object.keys(timeInHoursTable).forEach(elm => {
+            if (timeString.includes(elm)) {
+                console.log('ELM', amount, elm, timeString, timeInHoursTable[elm]);
+                timeInHours = timeInHoursTable[elm];
+                return;
+            }
+        });
+
+        return timeInHours * amount;
+    }
+
+    return false;
 }
 
 const resetList = () => {
