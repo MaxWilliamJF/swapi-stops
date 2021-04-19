@@ -29,14 +29,16 @@ const calculateStops = (starships, distance) => {
     }
 }
 
-const getStarshipsOnAPI = async(url) => {
+const getStarshipsOnAPI = async (url) => {
     if (url) {
         await fetch(url)
             .then(response => response.json())
             .then(async data => {
-                if (data.results && data.next) {
+                if (data.results) {
                     starships = starships.concat(data.results);
-                    await getStarshipsOnAPI(data.next);
+                    if (data.next) {
+                        await getStarshipsOnAPI(data.next);
+                    }
                 }
             });
     }
