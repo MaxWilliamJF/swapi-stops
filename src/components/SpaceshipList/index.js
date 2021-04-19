@@ -1,11 +1,15 @@
 import React, { useState, useEeffect } from "react";
 import Spaceship from "../Spaceship";
 
-const SpaceshipList = () => {
+const SpaceshipList = (a) => {
     return (
-        <>
-            <Spaceship></Spaceship>
-        </>
+        <div>
+            {
+                a.list.map((spaceship, i) => {
+                    return (<Spaceship key={i} title={spaceship.title} stop={spaceship.stop}></Spaceship>)
+                })
+            }
+        </div>
     )
 }
 

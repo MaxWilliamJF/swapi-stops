@@ -2,6 +2,10 @@
   text-align: center;
 }
 
+h3 {
+  margin: 0;
+}
+
 .header {
   background-color: #282c34;
   display: flex;
@@ -11,4 +15,8 @@
   font-size: calc(10px + 2vmin);
   color: white;
   padding: 1em;
+}
+
+.spaceship {
+  margin-top: 2em;
 }

@@ -1,8 +1,8 @@
-const Spaceship = () => {
+const Spaceship = (data) => {
     return (
-        <div>
-            <h3>Spaceship name goes here</h3>
-            <p>Stops needed: N</p>
+        <div className="spaceship">
+            <h3>{data.title}</h3>
+            <p>{data.stop}</p>
         </div>
     )
 }
